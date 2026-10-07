@@ -8,16 +8,16 @@
 
 Developers keep their essentials scattered:
 
-| What                 | Where it usually lives    |
-| -------------------- | ------------------------- |
-| Code snippets        | VS Code, Notion           |
-| AI prompts           | Buried in chat histories  |
-| Context files        | Deep inside projects      |
-| Useful links         | Browser bookmarks         |
-| Docs                 | Random folders            |
-| Commands             | `.txt` files              |
-| Project templates    | GitHub Gists              |
-| Terminal commands    | Bash history              |
+| What              | Where it usually lives   |
+| ----------------- | ------------------------ |
+| Code snippets     | VS Code, Notion          |
+| AI prompts        | Buried in chat histories |
+| Context files     | Deep inside projects     |
+| Useful links      | Browser bookmarks        |
+| Docs              | Random folders           |
+| Commands          | `.txt` files             |
+| Project templates | GitHub Gists             |
+| Terminal commands | Bash history             |
 
 The result is context switching, lost knowledge and inconsistent workflows. **DevStash** brings all of it into one place.
 
@@ -25,12 +25,12 @@ The result is context switching, lost knowledge and inconsistent workflows. **De
 
 ## 👥 Target Users
 
-| Persona                         | Primary need                                           |
-| ------------------------------- | ------------------------------------------------------ |
-| 🧑‍💻 **Everyday Developer**       | Quickly grab snippets, prompts, commands, links        |
-| 🤖 **AI-first Developer**        | Save prompts, contexts, workflows, system messages     |
-| 🎓 **Content Creator / Educator** | Store code blocks, explanations, course notes          |
-| 🏗️ **Full-stack Builder**        | Collect patterns, boilerplates, API examples           |
+| Persona                           | Primary need                                       |
+| --------------------------------- | -------------------------------------------------- |
+| 🧑‍💻 **Everyday Developer**         | Quickly grab snippets, prompts, commands, links    |
+| 🤖 **AI-first Developer**         | Save prompts, contexts, workflows, system messages |
+| 🎓 **Content Creator / Educator** | Store code blocks, explanations, course notes      |
+| 🏗️ **Full-stack Builder**         | Collect patterns, boilerplates, API examples       |
 
 ---
 
@@ -40,8 +40,8 @@ The result is context switching, lost knowledge and inconsistent workflows. **De
 
 Every item has a **type**. DevStash ships with fixed **system types**; users will be able to create **custom types** later (Pro).
 
-| Type    | Content kind | Color                                                       | Icon ([Lucide](https://lucide.dev/icons/)) | Plan |
-| ------- | ------------ | ----------------------------------------------------------- | ------------------------------------------ | ---- |
+| Type    | Content kind | Color                                                                      | Icon ([Lucide](https://lucide.dev/icons/))           | Plan |
+| ------- | ------------ | -------------------------------------------------------------------------- | ---------------------------------------------------- | ---- |
 | Snippet | Text         | ![#3b82f6](https://placehold.co/12x12/3b82f6/3b82f6.png) `#3b82f6` blue    | [`Code`](https://lucide.dev/icons/code)              | Free |
 | Prompt  | Text         | ![#8b5cf6](https://placehold.co/12x12/8b5cf6/8b5cf6.png) `#8b5cf6` purple  | [`Sparkles`](https://lucide.dev/icons/sparkles)      | Free |
 | Command | Text         | ![#f97316](https://placehold.co/12x12/f97316/f97316.png) `#f97316` orange  | [`Terminal`](https://lucide.dev/icons/terminal)      | Free |
@@ -97,19 +97,19 @@ Search across **content**, **titles**, **tags** and **types**.
 
 ## 🧱 Tech Stack
 
-| Layer          | Choice                                                                                          | Notes                                                             |
-| -------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Framework      | [Next.js 16](https://nextjs.org/docs) / [React 19](https://react.dev)                            | App Router, SSR pages with client components where needed         |
-| Language       | [TypeScript](https://www.typescriptlang.org/docs/)                                               | Strict mode                                                       |
-| Backend        | Next.js Route Handlers and Server Actions                                                       | Items CRUD, file uploads, AI calls. One repo, no separate API      |
-| Database       | [Neon](https://neon.tech/docs) (serverless PostgreSQL)                                           | Hosted Postgres                                                   |
-| ORM            | [Prisma 7](https://www.prisma.io/docs)                                                           | Check the latest docs; v7 changed config and client generation    |
-| Caching        | [Redis](https://redis.io/docs/) *(maybe)*                                                        | Only if needed                                                    |
-| File storage   | [Cloudflare R2](https://developers.cloudflare.com/r2/)                                           | S3-compatible, used for file and image items                      |
-| Auth           | [Auth.js / NextAuth v5](https://authjs.dev)                                                      | Credentials and GitHub providers, Prisma adapter                  |
-| AI             | [OpenAI](https://platform.openai.com/docs) `gpt-5-nano`                                          | Pro features only                                                 |
-| Styling        | [Tailwind CSS v4](https://tailwindcss.com/docs) + [shadcn/ui](https://ui.shadcn.com)             | Lucide icons come bundled with shadcn                             |
-| Payments       | [Stripe](https://docs.stripe.com)                                                                | Subscriptions for Pro                                             |
+| Layer        | Choice                                                                               | Notes                                                          |
+| ------------ | ------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| Framework    | [Next.js 16](https://nextjs.org/docs) / [React 19](https://react.dev)                | App Router, SSR pages with client components where needed      |
+| Language     | [TypeScript](https://www.typescriptlang.org/docs/)                                   | Strict mode                                                    |
+| Backend      | Next.js Route Handlers and Server Actions                                            | Items CRUD, file uploads, AI calls. One repo, no separate API  |
+| Database     | [Neon](https://neon.tech/docs) (serverless PostgreSQL)                               | Hosted Postgres                                                |
+| ORM          | [Prisma 7](https://www.prisma.io/docs)                                               | Check the latest docs; v7 changed config and client generation |
+| Caching      | [Redis](https://redis.io/docs/) _(maybe)_                                            | Only if needed                                                 |
+| File storage | [Cloudflare R2](https://developers.cloudflare.com/r2/)                               | S3-compatible, used for file and image items                   |
+| Auth         | [Auth.js / NextAuth v5](https://authjs.dev)                                          | Credentials and GitHub providers, Prisma adapter               |
+| AI           | [OpenAI](https://platform.openai.com/docs) `gpt-5-nano`                              | Pro features only                                              |
+| Styling      | [Tailwind CSS v4](https://tailwindcss.com/docs) + [shadcn/ui](https://ui.shadcn.com) | Lucide icons come bundled with shadcn                          |
+| Payments     | [Stripe](https://docs.stripe.com)                                                    | Subscriptions for Pro                                          |
 
 > [!IMPORTANT]
 > **Never use `prisma db push` or change the database structure directly.** Every schema change goes through a migration (`prisma migrate dev`), which runs in development first and then in production (`prisma migrate deploy`).
@@ -347,19 +347,19 @@ model Tag {
 
 Freemium model:
 
-| Feature                       | Free                   | Pro ($8/mo or $72/yr) |
-| ----------------------------- | ---------------------- | --------------------- |
-| Items                         | 50 total               | Unlimited             |
-| Collections                   | 3                      | Unlimited             |
-| System types                  | All except file/image  | All                   |
-| File & image uploads          | ❌                     | ✅                    |
-| Custom types                  | ❌                     | ✅ *(coming later)*   |
-| Search                        | Basic                  | Basic                 |
-| AI auto-tagging               | ❌                     | ✅                    |
-| AI code explanation           | ❌                     | ✅                    |
-| AI prompt optimizer           | ❌                     | ✅                    |
-| Export (JSON / ZIP)           | ❌                     | ✅                    |
-| Priority support              | ❌                     | ✅                    |
+| Feature              | Free                  | Pro ($8/mo or $72/yr) |
+| -------------------- | --------------------- | --------------------- |
+| Items                | 50 total              | Unlimited             |
+| Collections          | 3                     | Unlimited             |
+| System types         | All except file/image | All                   |
+| File & image uploads | ❌                    | ✅                    |
+| Custom types         | ❌                    | ✅ _(coming later)_   |
+| Search               | Basic                 | Basic                 |
+| AI auto-tagging      | ❌                    | ✅                    |
+| AI code explanation  | ❌                    | ✅                    |
+| AI prompt optimizer  | ❌                    | ✅                    |
+| Export (JSON / ZIP)  | ❌                    | ✅                    |
+| Priority support     | ❌                    | ✅                    |
 
 > [!NOTE]
 > **During development, every user gets every feature.** Build the Pro plumbing now (the `isPro` flag, Stripe fields, central limit checks), but don't enforce it yet.
@@ -376,6 +376,14 @@ Freemium model:
 - Subtle borders and shadows
 - Syntax highlighting in code blocks
 - Inspiration: [Notion](https://notion.so), [Linear](https://linear.app), [Raycast](https://raycast.com)
+
+### Screenshots
+
+- Refer to the screenshots as a base for the dashboard ui. It does not have to be exact these are just references.
+
+- @context/screenshots/desktop-ui-top.png
+- @context/screenshots/desktop-ui-bottom.png
+- @context/screenshots/mobile-ui.png
 
 ### Layout
 
