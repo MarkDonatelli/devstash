@@ -1,24 +1,24 @@
 # Current Feature
 
-Initial Next.js Setup
+Dashboard Mock Data
 
 ## Status
 
-Completed
+In Progress
 
 ## Goals
 
-- Scaffold the app with Create Next App (Next.js 16, React 19, TypeScript, Tailwind CSS v4, ESLint)
-- Move the app into `src/app/` and point the `@/*` alias at `./src/*`
-- Remove Create Next App boilerplate (starter page, Geist fonts, default CSS, `public/` SVGs)
-- Add project context files (`project-overview.md`, `coding-standards.md`, `ai-interaction.md`, `current-feature.md`) and `CLAUDE.md`
-- Push to GitHub
+- Single source of truth for dashboard mock data until the database is implemented
+- `src/lib/mock-data.ts` with the current user, item types, collections and items
+- Shape follows the draft Prisma schema in `project-overview.md` and the dashboard screenshots
+- Keep it simple: plain data to import, no helper functions
 
 ## Notes
 
-- Committed directly to `main` as project setup, not on a feature branch
-- Remote is HTTPS (`https://github.com/MarkDonatelli/devstash.git`) via the GitHub CLI; no SSH key on this machine
-- `favicon.ico` and `README.md` are still the Create Next App defaults
+- Branch: `feature/mock-data`
+- Types live in the mock data file for now; replaced by Prisma-generated types later
+- Counts (items per collection/type) are not stored; the UI derives them from `items`
+- `fileUrl` values for file/image items are placeholders and don't point to real files
 
 ## History
 
