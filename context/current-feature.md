@@ -1,6 +1,6 @@
 # Current Feature
 
-Dashboard UI Phase 3
+Prisma + Neon PostgreSQL Setup
 
 ## Status
 
@@ -8,19 +8,20 @@ Completed
 
 ## Goals
 
-- Main dashboard area to the right of the sidebar
-- 4 stats cards at the top: total items, collections, favorite items, favorite collections
-- Recent collections
-- Pinned items
-- 10 most recent items
-- Clicking an item card opens a drawer from the right with the item's full details (display only)
+- Install and configure Prisma 7 with Neon serverless PostgreSQL
+- Create the initial schema from the data models in @context/project-overview.md (expected to evolve)
+- Include the NextAuth models (Account, Session, VerificationToken)
+- Add appropriate indexes and cascade deletes
+- Create the initial migration with `prisma migrate dev`
 
 ## Notes
 
-- Phase 3 of 3. Full spec: @context/features/dashboard-phase-3-spec.md
-- Builds on phase 1 (@context/features/dashboard-phase-1-spec.md) and phase 2 (@context/features/dashboard-phase-2-spec.md)
-- Visual reference: @context/screenshots/desktop-ui-top.png and @context/screenshots/desktop-ui-bottom.png (stats cards are not in the screenshots)
-- Data comes from @src/lib/mock-data.ts, imported directly until the database is implemented
+- Full spec: @context/features/database-spec.md
+- Database standards: @context/coding-standards.md
+- Prisma 7 has breaking changes (connection URL in `prisma.config.ts`, new generator syntax). Read the upgrade guide before writing code: https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-7
+- Setup guide: https://www.prisma.io/docs/getting-started/prisma-orm/quickstart/prisma-postgres
+- `DATABASE_URL` points to the Neon development branch; a separate production branch exists. Always create migrations, never `prisma db push` unless specified
+- The dashboard keeps using @src/lib/mock-data.ts for now; switching it to the database is a separate feature
 
 ## History
 
@@ -29,3 +30,4 @@ Completed
 - **Dashboard UI Phase 1** — shadcn/ui setup, dark mode by default, `/dashboard` layout with top bar (search, New collection, New item) and Sidebar/Main placeholders (2026-10-07)
 - **Dashboard UI Phase 2** — collapsible sidebar (icon mode, mobile drawer) with item type links and counts, favorite/recent collections and user area; dashboard moved into `(dashboard)` route group with placeholder `/items/[type]` page (2026-10-07)
 - **Dashboard UI Phase 3** — main dashboard area with 4 stats cards, recent collections (tinted by dominant type), pinned items, 10 recent items, and a right-side drawer with full item details on card click (2026-10-07)
+- **Prisma + Neon PostgreSQL Setup** — Prisma 7 with the Neon adapter, `prisma.config.ts`, initial schema (Auth.js + app models, indexes, cascade deletes), `init` migration applied to the Neon development branch, shared client in `src/lib/prisma.ts` (2026-10-08)
