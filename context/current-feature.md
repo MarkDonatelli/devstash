@@ -1,6 +1,6 @@
 # Current Feature
 
-DB Check Script
+Dashboard Collections from the Database
 
 ## Status
 
@@ -8,16 +8,24 @@ Completed
 
 ## Goals
 
-- `scripts/check-db.ts` that connects to the database and prints the seeded demo data, to confirm `npx prisma db seed` worked
-- Print the demo user (no password hash, just whether one is set), system item types, collections with item counts, items grouped by type, and tags
-- Exit with an error if the demo user isn't found
-- Run it with `npm run db:check`
+Replace the mock collection data on the dashboard's main area with real data from Neon via Prisma (see @context/features/dashboard-collections-spec.md). Items below the collections stay on mock data for now.
+
+- `src/lib/db/collections.ts` with the data fetching functions for collections
+- The dashboard page (a server component) fetches the collections directly
+- Recent collections show the **6** most recently updated collections, in the existing `CollectionCard` design
+- Each card's color (tint and border) comes from the item type that is most common among its items, falling back to the collection's `defaultType`
+- Each card shows small icons for every item type in that collection, plus its item count
+- The "Collections" and "Favorite collections" stats and the "Recent collections" count come from the database
 
 ## Notes
 
-- Read-only: the script never writes to the database
-- Uses the shared client from `src/lib/prisma.ts` and the demo email from `prisma/seed-data.ts`
-- Like the seed, run it only against the Neon development branch
+- There's no auth yet, so the data belongs to the demo user, looked up by `DEMO_USER.email` from `prisma/seed-data.ts`. This is replaced by the session user once auth is built
+- The query loads only each item's type (id, name, icon, color), not item content; type ranking happens in `src/lib/db/collections.ts`
+- `/dashboard` calls `connection()` so it renders per request; without Cache Components a database query in the page would otherwise run once at build time
+- `CollectionCard` takes props shaped for the card rather than mock-data types, so it doesn't depend on `src/lib/mock-data.ts`
+- The "Items" and "Favorite items" stats, pinned items, recent items and the sidebar keep using mock data until their own phases
+- No pinned/recent items, sidebar or `/items/[type]` changes in this feature
+- The spec's screenshot reference (`context/screenshots/dashboard-ui-main.png`) doesn't exist; the current design is the reference
 
 ## History
 
@@ -30,3 +38,4 @@ Completed
 - **Database Seed** — `prisma/seed.ts` (run with `npx prisma db seed`) upserts the 7 system item types and replaces a demo user's collections, items and tags with the mock data; safe to re-run (2026-10-08)
 - **Seed Sample Data** — `prisma/seed.ts` rewritten to seed from `prisma/seed-data.ts` per the seed spec: `demo@devstash.io` with a bcrypt-hashed password, 7 system types, and 5 collections with 18 items (snippets, prompts, commands, real-URL links); removes the old mock demo user (2026-10-20)
 - **DB Check Script** — `scripts/check-db.ts` (run with `npm run db:check`) prints the seeded demo user, system types, collections, items and tags from the database; read-only (2026-10-20)
+- **Dashboard Collections from the Database** — recent collections (6, 3-column grid) and collection stats on `/dashboard` load from Neon via `src/lib/db/collections.ts`; card color from the most common item type, type icons per collection; demo user via `src/lib/db/users.ts` until auth; page renders per request with `connection()` (2026-10-20)

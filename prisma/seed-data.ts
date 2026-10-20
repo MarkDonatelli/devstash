@@ -1,5 +1,7 @@
+import { DEMO_USER_EMAIL } from "../src/lib/db/users";
+
 export const DEMO_USER = {
-  email: "demo@devstash.io",
+  email: DEMO_USER_EMAIL,
   name: "Demo User",
   password: "12345678",
   isPro: false,

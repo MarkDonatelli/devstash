@@ -1,46 +1,36 @@
 import type { ReactNode } from "react";
 import { Folder, FolderHeart, Layers, Star } from "lucide-react";
+import { connection } from "next/server";
 import { CollectionCard } from "@/components/dashboard/CollectionCard";
 import { ItemCard } from "@/components/dashboard/ItemCard";
 import { ItemDetails } from "@/components/dashboard/ItemDetails";
 import { ItemDrawer } from "@/components/dashboard/ItemDrawer";
 import { StatsCards, type Stat } from "@/components/dashboard/StatsCards";
+import { getCollectionStats, getRecentCollections } from "@/lib/db/collections";
+import { getCurrentUserId } from "@/lib/db/users";
 import { collections, items, itemTypes, type Item } from "@/lib/mock-data";
 
-const RECENT_COLLECTIONS_LIMIT = 4;
+const RECENT_COLLECTIONS_LIMIT = 6;
 const RECENT_ITEMS_LIMIT = 10;
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  // Render per request; otherwise the database query would run once at build time
+  await connection();
+
+  const userId = await getCurrentUserId();
+  const [collectionStats, recentCollections] = userId
+    ? await Promise.all([
+        getCollectionStats(userId),
+        getRecentCollections(userId, RECENT_COLLECTIONS_LIMIT),
+      ])
+    : [{ total: 0, favorites: 0 }, []];
+
   const stats: Stat[] = [
     { label: "Items", value: items.length, icon: Layers },
-    { label: "Collections", value: collections.length, icon: Folder },
+    { label: "Collections", value: collectionStats.total, icon: Folder },
     { label: "Favorite items", value: items.filter((item) => item.isFavorite).length, icon: Star },
-    {
-      label: "Favorite collections",
-      value: collections.filter((collection) => collection.isFavorite).length,
-      icon: FolderHeart,
-    },
+    { label: "Favorite collections", value: collectionStats.favorites, icon: FolderHeart },
   ];
-
-  const recentCollections = [...collections]
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .slice(0, RECENT_COLLECTIONS_LIMIT)
-    .map((collection) => {
-      const collectionItems = items.filter((item) => item.collectionIds.includes(collection.id));
-      const typeCounts = new Map<string, number>();
-      for (const item of collectionItems) {
-        typeCounts.set(item.itemTypeId, (typeCounts.get(item.itemTypeId) ?? 0) + 1);
-      }
-      const dominantTypeId =
-        [...typeCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? collection.defaultTypeId;
-
-      return {
-        collection,
-        itemCount: collectionItems.length,
-        dominantType: itemTypes.find((type) => type.id === dominantTypeId),
-        types: itemTypes.filter((type) => typeCounts.has(type.id)),
-      };
-    });
 
   const pinnedItems = items.filter((item) => item.isPinned);
   const recentItems = [...items]
@@ -56,10 +46,10 @@ export default function DashboardPage() {
 
       <StatsCards stats={stats} />
 
-      <Section title="Recent collections" count={collections.length}>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {recentCollections.map((props) => (
-            <CollectionCard key={props.collection.id} {...props} />
+      <Section title="Recent collections" count={collectionStats.total}>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {recentCollections.map((collection) => (
+            <CollectionCard key={collection.id} collection={collection} />
           ))}
         </div>
       </Section>

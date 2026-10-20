@@ -2,17 +2,15 @@ import type { CSSProperties } from "react";
 import { File, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ITEM_TYPE_ICONS } from "@/lib/item-type-icons";
-import type { Collection, ItemType } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import type { CollectionSummary } from "@/types/collection";
 
 interface CollectionCardProps {
-  collection: Collection;
-  itemCount: number;
-  dominantType: ItemType | undefined;
-  types: ItemType[];
+  collection: CollectionSummary;
 }
 
-export function CollectionCard({ collection, itemCount, dominantType, types }: CollectionCardProps) {
+export function CollectionCard({ collection }: CollectionCardProps) {
+  const { itemCount, dominantType, types } = collection;
   const Icon = ITEM_TYPE_ICONS[dominantType?.icon ?? ""] ?? File;
 
   return (
