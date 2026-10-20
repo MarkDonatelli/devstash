@@ -8,7 +8,9 @@ import { ItemDrawer } from "@/components/dashboard/ItemDrawer";
 import { StatsCards, type Stat } from "@/components/dashboard/StatsCards";
 import { getCollectionStats, getRecentCollections } from "@/lib/db/collections";
 import { getCurrentUserId } from "@/lib/db/users";
-import { collections, items, itemTypes, type Item } from "@/lib/mock-data";
+import { getPinnedItems, getRecentItems } from "@/lib/db/items";
+import { items } from "@/lib/mock-data";
+import type { ItemSummary } from "@/types/item";
 
 const RECENT_COLLECTIONS_LIMIT = 6;
 const RECENT_ITEMS_LIMIT = 10;
@@ -18,12 +20,14 @@ export default async function DashboardPage() {
   await connection();
 
   const userId = await getCurrentUserId();
-  const [collectionStats, recentCollections] = userId
+  const [collectionStats, recentCollections, pinnedItems, recentItems] = userId
     ? await Promise.all([
         getCollectionStats(userId),
         getRecentCollections(userId, RECENT_COLLECTIONS_LIMIT),
+        getPinnedItems(userId),
+        getRecentItems(userId, RECENT_ITEMS_LIMIT),
       ])
-    : [{ total: 0, favorites: 0 }, []];
+    : [{ total: 0, favorites: 0 }, [], [], []];
 
   const stats: Stat[] = [
     { label: "Items", value: items.length, icon: Layers },
@@ -31,11 +35,6 @@ export default async function DashboardPage() {
     { label: "Favorite items", value: items.filter((item) => item.isFavorite).length, icon: Star },
     { label: "Favorite collections", value: collectionStats.favorites, icon: FolderHeart },
   ];
-
-  const pinnedItems = items.filter((item) => item.isPinned);
-  const recentItems = [...items]
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .slice(0, RECENT_ITEMS_LIMIT);
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-10">
@@ -79,23 +78,14 @@ function Section({ title, count, children }: { title: string; count: number; chi
   );
 }
 
-function ItemGrid({ items }: { items: Item[] }) {
+function ItemGrid({ items }: { items: ItemSummary[] }) {
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {items.map((item) => {
-        const type = itemTypes.find((t) => t.id === item.itemTypeId);
-        const itemCollections = collections.filter((c) => item.collectionIds.includes(c.id));
-
-        return (
-          <ItemDrawer
-            key={item.id}
-            label={`Open ${item.title}`}
-            trigger={<ItemCard item={item} type={type} collectionName={itemCollections[0]?.name} />}
-          >
-            <ItemDetails item={item} type={type} collections={itemCollections} />
-          </ItemDrawer>
-        );
-      })}
+      {items.map((item) => (
+        <ItemDrawer key={item.id} label={`Open ${item.title}`} trigger={<ItemCard item={item} />}>
+          <ItemDetails item={item} />
+        </ItemDrawer>
+      ))}
     </div>
   );
 }

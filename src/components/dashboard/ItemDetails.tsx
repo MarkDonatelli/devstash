@@ -4,23 +4,22 @@ import { Badge } from "@/components/ui/badge";
 import { SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { formatFileSize, formatRelativeTime } from "@/lib/format";
 import { ITEM_TYPE_ICONS } from "@/lib/item-type-icons";
-import type { Collection, Item, ItemType } from "@/lib/mock-data";
+import type { ItemSummary } from "@/types/item";
 
 interface ItemDetailsProps {
-  item: Item;
-  type: ItemType | undefined;
-  collections: Collection[];
+  item: ItemSummary;
 }
 
-export function ItemDetails({ item, type, collections }: ItemDetailsProps) {
-  const Icon = ITEM_TYPE_ICONS[type?.icon ?? ""] ?? File;
+export function ItemDetails({ item }: ItemDetailsProps) {
+  const { type, collections } = item;
+  const Icon = ITEM_TYPE_ICONS[type.icon] ?? File;
 
   return (
-    <div style={{ "--type-color": type?.color ?? "#6b7280" } as CSSProperties}>
+    <div style={{ "--type-color": type.color } as CSSProperties}>
       <SheetHeader className="border-b pr-12">
         <span className="flex items-center gap-1.5 text-xs font-medium text-(--type-color)">
           <Icon className="size-3.5" />
-          {type?.name}
+          {type.name}
           {item.isPinned && <Pin className="ml-2 size-3.5 text-muted-foreground" />}
           {item.isFavorite && <Star className="size-3.5 fill-yellow-400 text-yellow-400" />}
         </span>

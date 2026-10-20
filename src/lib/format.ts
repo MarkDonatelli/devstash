@@ -9,7 +9,7 @@ const RELATIVE_TIME_UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
 
 const relativeTimeFormat = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
-export function formatRelativeTime(date: string, now = new Date()): string {
+export function formatRelativeTime(date: Date | string, now = new Date()): string {
   const seconds = (new Date(date).getTime() - now.getTime()) / 1000;
 
   for (const [unit, unitSeconds] of RELATIVE_TIME_UNITS) {

@@ -4,27 +4,27 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { formatFileSize, formatRelativeTime } from "@/lib/format";
 import { ITEM_TYPE_ICONS } from "@/lib/item-type-icons";
-import type { Item, ItemType } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import type { ItemSummary } from "@/types/item";
 
 interface ItemCardProps {
-  item: Item;
-  type: ItemType | undefined;
-  collectionName: string | undefined;
+  item: ItemSummary;
 }
 
-export function ItemCard({ item, type, collectionName }: ItemCardProps) {
-  const Icon = ITEM_TYPE_ICONS[type?.icon ?? ""] ?? File;
+export function ItemCard({ item }: ItemCardProps) {
+  const { type } = item;
+  const Icon = ITEM_TYPE_ICONS[type.icon] ?? File;
+  const collectionName = item.collections[0]?.name;
 
   return (
     <Card
       className="gap-3 px-4 ring-(--type-color)/30 transition-colors hover:ring-(--type-color)/70"
-      style={{ "--type-color": type?.color ?? "#6b7280" } as CSSProperties}
+      style={{ "--type-color": type.color } as CSSProperties}
     >
       <div className="flex items-center justify-between">
         <span className="flex items-center gap-1.5 text-xs font-medium text-(--type-color)">
           <Icon className="size-3.5" />
-          {type?.name}
+          {type.name}
         </span>
         <div className="flex items-center gap-2 text-muted-foreground">
           {item.isPinned && <Pin className="size-3.5" />}
@@ -62,12 +62,12 @@ export function ItemCard({ item, type, collectionName }: ItemCardProps) {
   );
 }
 
-function ItemPreview({ item }: { item: Item }) {
+function ItemPreview({ item }: { item: ItemSummary }) {
   if (item.contentType === "URL" && item.url) {
     return (
       <div className="flex items-center gap-2 rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground">
         <ExternalLink className="size-3.5 shrink-0" />
-        <span className="truncate">{new URL(item.url).hostname}</span>
+        <span className="truncate">{getHostname(item.url)}</span>
       </div>
     );
   }
@@ -95,4 +95,13 @@ function ItemPreview({ item }: { item: Item }) {
   }
 
   return null;
+}
+
+// Falls back to the raw URL so a malformed link can't crash the page
+function getHostname(url: string) {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return url;
+  }
 }
