@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Archive } from "lucide-react";
+import { Archive, FolderOpen } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -12,38 +13,28 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavCollections, type NavCollection } from "@/components/dashboard/NavCollections";
-import { NavItemTypes, type NavItemType } from "@/components/dashboard/NavItemTypes";
-import { collections, currentUser, items, itemTypes } from "@/lib/mock-data";
+import { NavItemTypes } from "@/components/dashboard/NavItemTypes";
+import { getSidebarCollections } from "@/lib/db/collections";
+import { getItemTypesWithCounts } from "@/lib/db/items";
+import { getCurrentUser } from "@/lib/db/users";
+import type { CollectionSummary } from "@/types/collection";
+import type { CurrentUser } from "@/types/user";
 
 const RECENT_COLLECTIONS_LIMIT = 5;
+const FALLBACK_TYPE_COLOR = "#6b7280";
 
-export function AppSidebar() {
-  const navItemTypes: NavItemType[] = itemTypes.map((type) => ({
-    slug: type.slug,
-    name: type.name,
-    icon: type.icon,
-    color: type.color,
-    count: items.filter((item) => item.itemTypeId === type.id).length,
-  }));
+function toNavCollection({ id, name, isFavorite, dominantType }: CollectionSummary): NavCollection {
+  return { id, name, isFavorite, color: dominantType?.color ?? FALLBACK_TYPE_COLOR };
+}
 
-  const navCollections: NavCollection[] = [...collections]
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .map((collection) => ({
-      id: collection.id,
-      name: collection.name,
-      isFavorite: collection.isFavorite,
-      color: itemTypes.find((type) => type.id === collection.defaultTypeId)?.color ?? "#6b7280",
-    }));
-
-  const favoriteCollections = navCollections.filter((collection) => collection.isFavorite);
-  const recentCollections = navCollections
-    .filter((collection) => !collection.isFavorite)
-    .slice(0, RECENT_COLLECTIONS_LIMIT);
-
-  const initials = currentUser.name
-    .split(" ")
-    .map((part) => part[0])
-    .join("");
+export async function AppSidebar() {
+  const user = await getCurrentUser();
+  const [itemTypes, collections] = user
+    ? await Promise.all([
+        getItemTypesWithCounts(user.id),
+        getSidebarCollections(user.id, RECENT_COLLECTIONS_LIMIT),
+      ])
+    : [[], { favorites: [], recent: [] }];
 
   return (
     <Sidebar collapsible="icon">
@@ -61,29 +52,57 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        <NavItemTypes itemTypes={navItemTypes} />
-        <NavCollections label="Favorite collections" collections={favoriteCollections} />
-        <NavCollections label="Recent collections" collections={recentCollections} />
+        <NavItemTypes itemTypes={itemTypes} />
+        <NavCollections label="Favorite collections" collections={collections.favorites.map(toNavCollection)} />
+        <NavCollections label="Recent collections" collections={collections.recent.map(toNavCollection)} />
+        <SidebarGroup className="pt-0">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip="View all collections"
+                className="text-muted-foreground"
+                render={<Link href="/collections" />}
+              >
+                <FolderOpen />
+                <span>View all collections</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg">
-              <Avatar className="size-8">
-                {currentUser.image && <AvatarImage src={currentUser.image} alt={currentUser.name} />}
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
-              <span className="grid flex-1 text-left leading-tight">
-                <span className="truncate font-medium">{currentUser.name}</span>
-                <span className="truncate text-xs text-muted-foreground">{currentUser.email}</span>
-              </span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+      {user && (
+        <SidebarFooter>
+          <UserMenu user={user} />
+        </SidebarFooter>
+      )}
 
       <SidebarRail />
     </Sidebar>
+  );
+}
+
+function UserMenu({ user }: { user: CurrentUser }) {
+  const name = user.name ?? user.email ?? "User";
+  const initials = name
+    .split(" ")
+    .map((part) => part[0])
+    .join("");
+
+  return (
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <SidebarMenuButton size="lg">
+          <Avatar className="size-8">
+            {user.image && <AvatarImage src={user.image} alt={name} />}
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+          <span className="grid flex-1 text-left leading-tight">
+            <span className="truncate font-medium">{name}</span>
+            <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+          </span>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+    </SidebarMenu>
   );
 }

@@ -1,6 +1,9 @@
 import type { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { ItemSummary } from "@/types/item";
+import type { ItemStats, ItemSummary, ItemTypeWithCount } from "@/types/item";
+
+// Display order for the system types in the sidebar
+const SYSTEM_TYPE_ORDER = ["snippets", "prompts", "commands", "notes", "links", "files", "images"];
 
 const ITEM_SUMMARY = {
   id: true,
@@ -54,4 +57,31 @@ export async function getRecentItems(userId: string, limit: number): Promise<Ite
   });
 
   return items.map(toItemSummary);
+}
+
+export async function getItemStats(userId: string): Promise<ItemStats> {
+  const [total, favorites] = await Promise.all([
+    prisma.item.count({ where: { userId } }),
+    prisma.item.count({ where: { userId, isFavorite: true } }),
+  ]);
+
+  return { total, favorites };
+}
+
+export async function getItemTypesWithCounts(userId: string): Promise<ItemTypeWithCount[]> {
+  const types = await prisma.itemType.findMany({
+    where: { isSystem: true },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      icon: true,
+      color: true,
+      _count: { select: { items: { where: { userId } } } },
+    },
+  });
+
+  return types
+    .map(({ _count, ...type }) => ({ ...type, count: _count.items }))
+    .sort((a, b) => SYSTEM_TYPE_ORDER.indexOf(a.slug) - SYSTEM_TYPE_ORDER.indexOf(b.slug));
 }

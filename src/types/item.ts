@@ -24,3 +24,17 @@ export interface ItemSummary {
   tags: string[];
   collections: ItemCollectionSummary[];
 }
+
+export interface ItemTypeWithCount {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string;
+  color: string;
+  count: number;
+}
+
+export interface ItemStats {
+  total: number;
+  favorites: number;
+}

@@ -13,17 +13,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { ITEM_TYPE_ICONS } from "@/lib/item-type-icons";
-
-export interface NavItemType {
-  slug: string;
-  name: string;
-  icon: string;
-  color: string;
-  count: number;
-}
+import type { ItemTypeWithCount } from "@/types/item";
 
 interface NavItemTypesProps {
-  itemTypes: NavItemType[];
+  itemTypes: ItemTypeWithCount[];
 }
 
 export function NavItemTypes({ itemTypes }: NavItemTypesProps) {

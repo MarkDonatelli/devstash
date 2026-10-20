@@ -7,9 +7,8 @@ import { ItemDetails } from "@/components/dashboard/ItemDetails";
 import { ItemDrawer } from "@/components/dashboard/ItemDrawer";
 import { StatsCards, type Stat } from "@/components/dashboard/StatsCards";
 import { getCollectionStats, getRecentCollections } from "@/lib/db/collections";
-import { getCurrentUserId } from "@/lib/db/users";
-import { getPinnedItems, getRecentItems } from "@/lib/db/items";
-import { items } from "@/lib/mock-data";
+import { getItemStats, getPinnedItems, getRecentItems } from "@/lib/db/items";
+import { getCurrentUser } from "@/lib/db/users";
 import type { ItemSummary } from "@/types/item";
 
 const RECENT_COLLECTIONS_LIMIT = 6;
@@ -19,20 +18,21 @@ export default async function DashboardPage() {
   // Render per request; otherwise the database query would run once at build time
   await connection();
 
-  const userId = await getCurrentUserId();
-  const [collectionStats, recentCollections, pinnedItems, recentItems] = userId
+  const userId = (await getCurrentUser())?.id;
+  const [itemStats, collectionStats, recentCollections, pinnedItems, recentItems] = userId
     ? await Promise.all([
+        getItemStats(userId),
         getCollectionStats(userId),
         getRecentCollections(userId, RECENT_COLLECTIONS_LIMIT),
         getPinnedItems(userId),
         getRecentItems(userId, RECENT_ITEMS_LIMIT),
       ])
-    : [{ total: 0, favorites: 0 }, [], [], []];
+    : [{ total: 0, favorites: 0 }, { total: 0, favorites: 0 }, [], [], []];
 
   const stats: Stat[] = [
-    { label: "Items", value: items.length, icon: Layers },
+    { label: "Items", value: itemStats.total, icon: Layers },
     { label: "Collections", value: collectionStats.total, icon: Folder },
-    { label: "Favorite items", value: items.filter((item) => item.isFavorite).length, icon: Star },
+    { label: "Favorite items", value: itemStats.favorites, icon: Star },
     { label: "Favorite collections", value: collectionStats.favorites, icon: FolderHeart },
   ];
 
