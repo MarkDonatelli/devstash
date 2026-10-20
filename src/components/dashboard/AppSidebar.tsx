@@ -29,12 +29,10 @@ function toNavCollection({ id, name, isFavorite, dominantType }: CollectionSumma
 
 export async function AppSidebar() {
   const user = await getCurrentUser();
-  const [itemTypes, collections] = user
-    ? await Promise.all([
-        getItemTypesWithCounts(user.id),
-        getSidebarCollections(user.id, RECENT_COLLECTIONS_LIMIT),
-      ])
-    : [[], { favorites: [], recent: [] }];
+  const [itemTypes, collections] = await Promise.all([
+    getItemTypesWithCounts(user?.id ?? null),
+    user ? getSidebarCollections(user.id, RECENT_COLLECTIONS_LIMIT) : { favorites: [], recent: [] },
+  ]);
 
   return (
     <Sidebar collapsible="icon">

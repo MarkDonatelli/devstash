@@ -1,6 +1,6 @@
 # Current Feature
 
-Stats & Sidebar from the Database
+Fix: Sidebar Item Types Without a User
 
 ## Status
 
@@ -8,21 +8,12 @@ Completed
 
 ## Goals
 
-Move the last mock data on the dashboard (the item stats and the whole sidebar) to Neon via Prisma (see @context/features/stats-sidebar-spec.md).
-
-- **Stats**: "Items" and "Favorite items" come from the database, so all 4 stats are real, in the current design
-- **Sidebar item types**: the system item types with their icons, colors and the demo user's item counts, linking to `/items/[slug]` (e.g. `/items/snippets`)
-- **Sidebar collections**: favorite collections keep their star; recent collections show a colored circle for the most-used item type in that collection (same logic as the dashboard cards)
-- **"View all collections"** link under the collections list, going to `/collections`
-- **Sidebar user**: name and email of the demo user from the database
-- Database functions in `src/lib/db/items.ts` and `src/lib/db/collections.ts`, following the existing collections file
+- The sidebar always lists the 7 system item types, even when no current user is found (counts show 0)
 
 ## Notes
 
-- `/collections` doesn't exist yet, so the "View all collections" link 404s until that page is built
-- The sidebar fetches in the `(dashboard)` layout, so both `/dashboard` and `/items/[type]` get real data; the current user lookup is wrapped in React `cache()` so the layout and page share one query per request
-- Item type counts use a filtered `_count`, not by loading items
-- `/items/[type]` itself is still a placeholder that looks types up in mock data; its list view is a later spec (`item-list-view-spec.md`)
+- Found on the first production deploy: with no demo user in the production database, the sidebar's item types list was empty, which hid that the types themselves were fine
+- Item types are system data, not per-user, so they shouldn't depend on the user lookup
 
 ## History
 
@@ -38,3 +29,4 @@ Move the last mock data on the dashboard (the item stats and the whole sidebar) 
 - **Dashboard Collections from the Database** — recent collections (6, 3-column grid) and collection stats on `/dashboard` load from Neon via `src/lib/db/collections.ts`; card color from the most common item type, type icons per collection; demo user via `src/lib/db/users.ts` until auth; page renders per request with `connection()` (2026-10-20)
 - **Dashboard Items from the Database** — pinned and recent items on `/dashboard` (cards and drawer) load from Neon via `src/lib/db/items.ts`; `ItemCard`/`ItemDetails` take an `ItemSummary` (`src/types/item.ts`); invalid link URLs no longer crash the card (2026-10-20)
 - **Stats & Sidebar from the Database** — all 4 dashboard stats, sidebar item types (icons, counts, `/items/[slug]` links), favorite/recent collections (dot colored by most-used type), "View all collections" link and the user area load from Neon; `getCurrentUser()` cached per request (2026-10-20)
+- **Fix: Sidebar Item Types Without a User** — sidebar always lists the 7 system item types (counts 0 when no user is found), so a missing user no longer hides them (2026-10-20)

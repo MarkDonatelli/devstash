@@ -68,7 +68,9 @@ export async function getItemStats(userId: string): Promise<ItemStats> {
   return { total, favorites };
 }
 
-export async function getItemTypesWithCounts(userId: string): Promise<ItemTypeWithCount[]> {
+// System types are listed even without a user; counts are then 0
+export async function getItemTypesWithCounts(userId: string | null): Promise<ItemTypeWithCount[]> {
+  const itemsWhere: Prisma.ItemWhereInput = userId ? { userId } : { id: { in: [] } };
   const types = await prisma.itemType.findMany({
     where: { isSystem: true },
     select: {
@@ -77,7 +79,7 @@ export async function getItemTypesWithCounts(userId: string): Promise<ItemTypeWi
       slug: true,
       icon: true,
       color: true,
-      _count: { select: { items: { where: { userId } } } },
+      _count: { select: { items: { where: itemsWhere } } },
     },
   });
 
