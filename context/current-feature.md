@@ -1,6 +1,6 @@
 # Current Feature
 
-Fix: Sidebar Item Types Without a User
+Pro Badge in Sidebar
 
 ## Status
 
@@ -8,12 +8,14 @@ Completed
 
 ## Goals
 
-- The sidebar always lists the 7 system item types, even when no current user is found (counts show 0)
+- Show a "PRO" badge next to the File and Image item types in the sidebar
+- Keep the Pro type list in a shared constant (`src/lib/plans.ts`)
+- Display only, no access limits yet; no schema change
 
 ## Notes
 
-- Found on the first production deploy: with no demo user in the production database, the sidebar's item types list was empty, which hid that the types themselves were fine
-- Item types are system data, not per-user, so they shouldn't depend on the user lookup
+- Spec: @context/features/pro-badge-sidebar-spec.md
+- Badge is hidden when the sidebar is collapsed to icon mode
 
 ## History
 
@@ -30,3 +32,4 @@ Completed
 - **Dashboard Items from the Database** — pinned and recent items on `/dashboard` (cards and drawer) load from Neon via `src/lib/db/items.ts`; `ItemCard`/`ItemDetails` take an `ItemSummary` (`src/types/item.ts`); invalid link URLs no longer crash the card (2026-10-20)
 - **Stats & Sidebar from the Database** — all 4 dashboard stats, sidebar item types (icons, counts, `/items/[slug]` links), favorite/recent collections (dot colored by most-used type), "View all collections" link and the user area load from Neon; `getCurrentUser()` cached per request (2026-10-20)
 - **Fix: Sidebar Item Types Without a User** — sidebar always lists the 7 system item types (counts 0 when no user is found), so a missing user no longer hides them (2026-10-20)
+- **Pro Badge in Sidebar** — small "PRO" badge next to the File and Image item types in the sidebar (hidden in icon mode); Pro type slugs in `src/lib/plans.ts`; display only, no limits enforced (2026-10-23)
