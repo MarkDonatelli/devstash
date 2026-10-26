@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { File, Star } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { ITEM_TYPE_ICONS } from "@/lib/item-type-icons";
+import { FALLBACK_TYPE_COLOR, ITEM_TYPE_ICONS } from "@/lib/item-type-icons";
 import { cn } from "@/lib/utils";
 import type { CollectionSummary } from "@/types/collection";
 
@@ -16,7 +16,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
   return (
     <Card
       className="gap-4 bg-[color-mix(in_oklab,var(--type-color)_6%,var(--card))] px-4 ring-(--type-color)/25 transition-colors hover:ring-(--type-color)/60"
-      style={{ "--type-color": dominantType?.color ?? "#6b7280" } as CSSProperties}
+      style={{ "--type-color": dominantType?.color ?? FALLBACK_TYPE_COLOR } as CSSProperties}
     >
       <div className="flex items-start justify-between">
         <span className="flex size-10 items-center justify-center rounded-lg bg-(--type-color)/15 text-(--type-color)">

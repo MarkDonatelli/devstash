@@ -1,8 +1,9 @@
 import type { CSSProperties } from "react";
 import { ExternalLink, File, Folder, Pin, Star } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { formatFileSize, formatRelativeTime } from "@/lib/format";
+import { FileInfo } from "@/components/dashboard/FileInfo";
+import { TagList } from "@/components/dashboard/TagList";
+import { formatRelativeTime } from "@/lib/format";
 import { ITEM_TYPE_ICONS } from "@/lib/item-type-icons";
 import { cn } from "@/lib/utils";
 import type { ItemSummary } from "@/types/item";
@@ -18,7 +19,7 @@ export function ItemCard({ item }: ItemCardProps) {
 
   return (
     <Card
-      className="gap-3 px-4 ring-(--type-color)/30 transition-colors hover:ring-(--type-color)/70"
+      className="gap-3 px-4 ring-(--type-color)/30 transition-colors group-hover/item:ring-(--type-color)/70 hover:ring-(--type-color)/70"
       style={{ "--type-color": type.color } as CSSProperties}
     >
       <div className="flex items-center justify-between">
@@ -41,15 +42,7 @@ export function ItemCard({ item }: ItemCardProps) {
 
       <ItemPreview item={item} />
 
-      {item.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {item.tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="rounded-md font-normal">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      )}
+      {item.tags.length > 0 && <TagList tags={item.tags} />}
 
       <div className="mt-auto flex items-center justify-between border-t pt-3 text-xs text-muted-foreground">
         <span className="flex min-w-0 items-center gap-1.5">
@@ -73,17 +66,7 @@ function ItemPreview({ item }: { item: ItemSummary }) {
   }
 
   if (item.contentType === "FILE" && item.fileName) {
-    return (
-      <div className="flex items-center gap-3 rounded-lg bg-muted/50 p-3">
-        <File className="size-5 shrink-0 text-muted-foreground" />
-        <div className="min-w-0">
-          <p className="truncate text-xs font-medium">{item.fileName}</p>
-          {item.fileSize !== null && (
-            <p className="text-xs text-muted-foreground">{formatFileSize(item.fileSize)}</p>
-          )}
-        </div>
-      </div>
-    );
+    return <FileInfo fileName={item.fileName} fileSize={item.fileSize} compact />;
   }
 
   if (item.content) {

@@ -8,7 +8,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "DevStash",
-  description: "DevStash",
+  description: "One fast, searchable, AI-enhanced hub for all your dev knowledge and resources.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
