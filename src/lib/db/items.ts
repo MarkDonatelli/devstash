@@ -85,5 +85,11 @@ export async function getItemTypesWithCounts(userId: string | null): Promise<Ite
 
   return types
     .map(({ _count, ...type }) => ({ ...type, count: _count.items }))
-    .sort((a, b) => SYSTEM_TYPE_ORDER.indexOf(a.slug) - SYSTEM_TYPE_ORDER.indexOf(b.slug));
+    .sort((a, b) => typeOrder(a.slug) - typeOrder(b.slug));
+}
+
+// Types missing from SYSTEM_TYPE_ORDER go last instead of first
+function typeOrder(slug: string) {
+  const index = SYSTEM_TYPE_ORDER.indexOf(slug);
+  return index === -1 ? SYSTEM_TYPE_ORDER.length : index;
 }

@@ -1,0 +1,17 @@
+import { Badge } from "@/components/ui/badge";
+
+interface TagListProps {
+  tags: string[];
+}
+
+export function TagList({ tags }: TagListProps) {
+  return (
+    <div className="flex flex-wrap gap-1">
+      {tags.map((tag) => (
+        <Badge key={tag} variant="secondary" className="rounded-md font-normal">
+          {tag}
+        </Badge>
+      ))}
+    </div>
+  );
+}

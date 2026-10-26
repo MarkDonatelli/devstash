@@ -1,9 +1,11 @@
 import type { CSSProperties, ReactNode } from "react";
 import { ExternalLink, File, Folder, Pin, Star } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { formatFileSize, formatRelativeTime } from "@/lib/format";
+import { FileInfo } from "@/components/dashboard/FileInfo";
+import { TagList } from "@/components/dashboard/TagList";
+import { formatRelativeTime } from "@/lib/format";
 import { ITEM_TYPE_ICONS } from "@/lib/item-type-icons";
+import { isHttpUrl } from "@/lib/url";
 import type { ItemSummary } from "@/types/item";
 
 interface ItemDetailsProps {
@@ -38,41 +40,31 @@ export function ItemDetails({ item }: ItemDetailsProps) {
 
         {item.url && (
           <Field label="URL">
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-(--type-color) hover:underline"
-            >
-              {item.url}
-              <ExternalLink className="size-3.5" />
-            </a>
+            {isHttpUrl(item.url) ? (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-(--type-color) hover:underline"
+              >
+                {item.url}
+                <ExternalLink className="size-3.5" />
+              </a>
+            ) : (
+              <p className="text-sm break-all text-muted-foreground">{item.url}</p>
+            )}
           </Field>
         )}
 
         {item.fileName && (
           <Field label="File">
-            <div className="flex items-center gap-3 rounded-lg bg-muted/50 p-3">
-              <File className="size-5 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-medium">{item.fileName}</p>
-                {item.fileSize !== null && (
-                  <p className="text-xs text-muted-foreground">{formatFileSize(item.fileSize)}</p>
-                )}
-              </div>
-            </div>
+            <FileInfo fileName={item.fileName} fileSize={item.fileSize} />
           </Field>
         )}
 
         {item.tags.length > 0 && (
           <Field label="Tags">
-            <div className="flex flex-wrap gap-1">
-              {item.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="rounded-md font-normal">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
+            <TagList tags={item.tags} />
           </Field>
         )}
 

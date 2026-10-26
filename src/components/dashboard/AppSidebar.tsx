@@ -17,11 +17,11 @@ import { NavItemTypes } from "@/components/dashboard/NavItemTypes";
 import { getSidebarCollections } from "@/lib/db/collections";
 import { getItemTypesWithCounts } from "@/lib/db/items";
 import { getCurrentUser } from "@/lib/db/users";
+import { FALLBACK_TYPE_COLOR } from "@/lib/item-type-icons";
 import type { CollectionSummary } from "@/types/collection";
 import type { CurrentUser } from "@/types/user";
 
 const RECENT_COLLECTIONS_LIMIT = 5;
-const FALLBACK_TYPE_COLOR = "#6b7280";
 
 function toNavCollection({ id, name, isFavorite, dominantType }: CollectionSummary): NavCollection {
   return { id, name, isFavorite, color: dominantType?.color ?? FALLBACK_TYPE_COLOR };
@@ -83,8 +83,10 @@ export async function AppSidebar() {
 function UserMenu({ user }: { user: CurrentUser }) {
   const name = user.name ?? user.email ?? "User";
   const initials = name
-    .split(" ")
-    .map((part) => part[0])
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0].toUpperCase())
     .join("");
 
   return (

@@ -1,6 +1,6 @@
 # Current Feature
 
-Pro Badge in Sidebar
+Code Scan Fixes
 
 ## Status
 
@@ -8,14 +8,17 @@ Completed
 
 ## Goals
 
-- Show a "PRO" badge next to the File and Image item types in the sidebar
-- Keep the Pro type list in a shared constant (`src/lib/plans.ts`)
-- Display only, no access limits yet; no schema change
+- Scan the codebase with the `code-scanner` subagent (`.claude/agents/code-scanner.md`)
+- Review the findings and pick which ones to fix
+- Fix the chosen issues and keep `npm run build` passing
 
 ## Notes
 
-- Spec: @context/features/pro-badge-sidebar-spec.md
-- Badge is hidden when the sidebar is collapsed to icon mode
+- Scope: `src/`, `prisma/`, `scripts/` and root config; `src/generated` is skipped
+- No auth yet by design (demo user via `getCurrentUser()`), so it is out of scope
+- Fixing everything except the dummy-data findings (`/items/[type]` mock data, seed demo password)
+- Fixes: `DATABASE_URL` check, dashboard `loading.tsx`/`error.tsx`, sidebar Suspense skeleton and `catchError` boundary, http(s)-only item links, shared `FALLBACK_TYPE_COLOR`, native drawer button, `/` redirects to `/dashboard`, real metadata description, initials, named time/size constants, unknown types sort last, shared `TagList`/`FileInfo`, `next.config.ts` comment removed
+- Not changed: `cache()` on collection fetchers (sidebar and page run different queries, nothing to dedupe); collection links (need the collections pages)
 
 ## History
 
@@ -33,3 +36,4 @@ Completed
 - **Stats & Sidebar from the Database** — all 4 dashboard stats, sidebar item types (icons, counts, `/items/[slug]` links), favorite/recent collections (dot colored by most-used type), "View all collections" link and the user area load from Neon; `getCurrentUser()` cached per request (2026-10-20)
 - **Fix: Sidebar Item Types Without a User** — sidebar always lists the 7 system item types (counts 0 when no user is found), so a missing user no longer hides them (2026-10-20)
 - **Pro Badge in Sidebar** — small "PRO" badge next to the File and Image item types in the sidebar (hidden in icon mode); Pro type slugs in `src/lib/plans.ts`; display only, no limits enforced (2026-10-23)
+- **Code Scan Fixes** — `code-scanner` subagent added; fixed its findings except dummy data: `DATABASE_URL` check, dashboard loading/error states with a sidebar skeleton and error boundary, http(s)-only item links, native drawer button, shared `TagList`/`FileInfo` and fallback color, `/` redirects to `/dashboard`, named constants (2026-10-26)
